@@ -7,7 +7,7 @@
 ....
 
 <h2>Motivation</h2>
-You have a next.js application and you want to host it on digital ocean droplet. You want to use https and a domain. What setup is required on the droplt to achive this ?
+You have a next.js application and you want to host it on digital ocean droplet - VPS. You want to use https and a domain. What setup is required on the droplt to achive this ?
 
 <h2>Installation</h2>
 <h4>make pm2 global (one point of truth)</h4>
@@ -304,8 +304,18 @@ sudo systemctl reload nginx
 ....
 
 
+
 <h2>Technologies Used</h2>
-....
+<ul>
+<li>digital ocean droplet</li>
+<li>nginx</li>
+<li>ubuntu</li>
+<li>pm2</li>
+<li>https</li>
+<li>namecheap</li>
+<li>next.js</li>
+</ul>
+
 
 
 <h2>Design</h2>
