@@ -308,11 +308,11 @@ Using this file you can now access the next.js app via the browser using the dro
     <ul>
       <li>Test the Nginx configuration for syntax errors:</li>
 
-```bash
-sudo nginx -t
-```
+  ```bash
+  sudo nginx -t
+  ```
 
-    </ul>
+  </ul>
   </li>
   <li><strong>Remove Default Nginx Configuration:</strong>
     <ul>
@@ -374,7 +374,8 @@ sudo nginx -t
 
   <strong>4. Review Nginx Configuration</strong>
     <p>The Nginx configuration file will look like this:</p>
-    <pre><code>
+
+```nginx
 server {
     listen 80;
     server_name post2youtube.xyz www.post2youtube.xyz;
@@ -399,7 +400,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 }
-    </code></pre>
+```
 
   <strong>5. Restart Nginx</strong>
     <ul>
@@ -418,31 +419,26 @@ sudo systemctl reload nginx
     </ul>
 
 
-
 <h2>Technologies Used</h2>
 <ul>
-<li>digital ocean droplet</li>
-<li>nginx (1.26.0)</li>
-<li>ubuntu (24.10)</li>
-<li>node (v20.16.0)</li>
-<li>pm2 (5.4.3)</li>
-<li>https</li>
-<li>namecheap</li>
-<li>next.js (15.2.1)</li>
+  <li>DigitalOcean Droplet</li>
+  <li>Nginx (1.26.0)</li>
+  <li>Ubuntu (24.10)</li>
+  <li>Node.js (v20.16.0)</li>
+  <li>PM2 (5.4.3)</li>
+  <li>Let's Encrypt (Certbot)</li>
+  <li>Namecheap</li>
+  <li>Next.js (15.2.1)</li>
 </ul>
-
-
-
 
 
 <h2>Points of Interest</h2>
 <ul>
-    <li>Altough the subject of this repo is 'Setup digital ocean droplet for next.js application' it can be used for deploying any node based web site</li>
+  <li>Although this tutorial focuses on setting up a DigitalOcean droplet for a Next.js application, the principles and configurations can be applied to deploy any Node.js-based website or application.</li>
 </ul>
 
-<h2>Refrences</h2>
+<h2>References</h2>
 <ul>
-    <li id='ref1'>The next.js application appears in the following <a href='https://github.com/NathanKr/simple-ci-cd-pipeline-for-next.js-app'>repo</a> including CI\CD workflow</li>
+  <li>The Next.js application used in this tutorial, including its CI/CD workflow, can be found in the following repository: <a href="https://github.com/NathanKr/simple-ci-cd-pipeline-for-next.js-app">https://github.com/NathanKr/simple-ci-cd-pipeline-for-next.js-app</a></li>
 </ul>
-
 
