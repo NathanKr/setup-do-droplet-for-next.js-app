@@ -1,54 +1,59 @@
 <h1>Project Name</h1>
 Next.js Droplet Setup with Nginx and HTTPS
 
-
-
 <h2>Project Description</h2>
-This project represent the setup that you need to perform once before you want to use next.js app on digital ocean droplet
+This step-by-step tutorial details the process of setting up a DigitalOcean droplet to host a Next.js application, with instructions for configuring Nginx and enabling HTTPS.
+
 
 <h2>Motivation</h2>
-You have a next.js application and you want to host it on digital ocean droplet - VPS. You want to use https and a domain. What setup is required on the droplt to achive this ?
+You have a Next.js application and want to deploy it on a DigitalOcean droplet (VPS) with HTTPS and a custom domain. What steps are needed to configure the droplet for this? This tutorial provides the answers.
+
 
 <h2>Prerequisites</h2>
 <ul>
-  <li>A DigitalOcean account and a created droplet.</li>
-  <li>A domain name.</li>
-  <li>Basic knowledge of Linux command-line interface.</li>
-  <li>A next.js application.</li>
-  <li>Either:
-    * A non-root user with sudo privileges (recommended for enhanced security).
-    * The root user (use with caution)</li>
+  <li>A DigitalOcean account and an active droplet.</li>
+  <li>A registered domain name.</li>
+  <li>Basic proficiency with the Linux command-line interface.</li>
+  <li>A functional Next.js application.</li>
+  <li>System user permissions:
+    <ul>
+      <li>A non-root user with sudo privileges (recommended for enhanced security).</li>
+      <li>The root user (use with caution).</li>
+    </ul>
+  </li>
 </ul>
 
-
 <h2>Installation</h2>
-Execute the following steps in sequence for a one-per-droplet configuration.
+Execute these steps in sequence to configure your DigitalOcean droplet for initial use.
 
-
-<h3>Install node and npm</h3>
-    <ol>
-        <li><strong>Update your package index:</strong>
-            <pre><code>sudo apt update</code></pre>
-        </li>
-        <li><strong>Install Node.js and npm:</strong>
-            <pre><code>sudo apt install nodejs npm</code></pre>
-        </li>
-        <li><strong>Verify the installation:</strong>
-            <ul>
-                <li>Check the Node.js version:
-                    <pre><code>node -v</code></pre>
-                </li>
-                <li>Check the npm version:
-                    <pre><code>npm -v</code></pre>
-                </li>
-            </ul>
-        </li>
-    </ol>
+<h3>Install Node.js and npm</h3>
+<p>Node.js and npm are essential for running Next.js applications. Node.js is the runtime environment, and npm is the package manager.</p>
+<ol>
+  <li><strong>Update your package index:</strong>
+    <p>This ensures you have the latest package information.</p>
+    <pre><code>sudo apt update</code></pre>
+  </li>
+  <li><strong>Install Node.js and npm:</strong>
+    <pre><code>sudo apt install nodejs npm</code></pre>
+  </li>
+  <li><strong>Verify the installation:</strong>
+    <p>Confirm that Node.js and npm are installed correctly.</p>
+    <ul>
+      <li>Check the Node.js version:
+        <pre><code>node -v</code></pre>
+      </li>
+      <li>Check the npm version:
+        <pre><code>npm -v</code></pre>
+      </li>
+    </ul>
+  </li>
+</ol>
 
 
 <h3>Make pm2 global (one point of truth)</h3>
 
-1. <strong>Install pm2 Globally as Root</strong>
+<ol>
+<li><strong>Install pm2 Globally as Root</strong>
 
 Install pm2 globally:
 
@@ -61,8 +66,8 @@ Verify installation:
 ```bash
 pm2 -v
 ```
-
-2. <strong>Ensure Non-Root User Can Access pm2</strong>
+</li>
+<li><strong>Ensure Non-Root User Can Access pm2</strong>
 Log in as the Non-Root User:
 
 If you're currently logged in as root, switch to the non-root user:
@@ -84,8 +89,8 @@ Confirm the non-root user can invoke pm2:
 su - <non-root-username>
 pm2 -v
 ```
-
-3. <strong>Grant Write Access to PM2 Files</strong>
+</li>
+<li><strong>Grant Write Access to PM2 Files</strong>
 Change ownership of pm2 directories to the non-root user:
 
 ```bash
@@ -97,8 +102,8 @@ Verify that the .pm2 directory for the user exists:
 ```bash
 ls -l /home/<non-root-username>/.pm2
 ```
-
-4. <strong>Test PM2 Commands as Non-Root User</strong>
+</li>
+<li><strong>Test PM2 Commands as Non-Root User</strong>
 
 ```bash
 su - <non-root-username>
@@ -111,16 +116,16 @@ pm2 start app.js --name "my-app"
 pm2 list
 ```
 You can also use shell command e.g. ls instead of app.js
-
-5. <strong>Configure CI/CD Pipeline to Use Non-Root User</strong>
+</li>
+<li><strong>Configure CI/CD Pipeline to Use Non-Root User</strong>
 
 Update your CI/CD pipeline's ssh commands to switch to the non-root user. For example:
 
 ```bash
 ssh non-root-user@VPS_IP "pm2 restart my-app"
 ```
-
-6. <strong>Set Up Autostart for PM2 (Optional for Production)</strong> 
+</li>
+<li><strong>Set Up Autostart for PM2 (Optional for Production)</strong> 
 need to be invoked once
 While logged in as the non-root user, configure autostart for the system:
 
@@ -135,18 +140,19 @@ Once done you can check the status as follows
 ```bash
 sudo systemctl status pm2-<non-root-username>
 ```
+</li>
 
-
-7. <strong>Save PM2 Processes (Optional)</strong>
+<li><strong>Save PM2 Processes (Optional)</strong>
 Save the current list of processes so they can be restored after a reboot:
 
 ```bash
 pm2 save
 ```
+</li>
+</ol>
+
 
 <h3>Install Nginx</h3>
-
-
 <ol>
   <li><code>sudo apt update</code> - Update your package index</li>
   <li><code>sudo apt install nginx</code> - Install Nginx</li>
@@ -161,9 +167,9 @@ The configuration for this default behavior is usually stored in the /etc/nginx/
 <h3>Configure Nginx</h3>
 <ol>
   <li>
-    <strong>Create the file in your GitHub repository:</strong> Store the <code>my-app.conf</code> file in your project's <code>config/nginx</code> directory.
-    <pre>
-      <code>
+    <strong>Create the file in your GitHub repository:</strong> Store the <code>my-app.conf</code> file in your project's <code>config/nginx</code> directory. This configuration file sets up a reverse proxy for your Next.js app
+
+```nginx
 server {
     listen 80;
 
@@ -176,8 +182,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 }
-      </code>
-    </pre>
+```
   </li>
   <li>
     <strong>Move and link the file</strong> In your GitHub Actions workflow, after the code is checked out,  execute the following commands on your DigitalOcean droplet:
@@ -199,87 +204,146 @@ sudo systemctl reload nginx
   </li>
 </ol>
 
-using this file you can now access the next.js app via the browser using the droplet ip and port 3000
+Using this file you can now access the next.js app via the browser using the droplet ip and port 3000
 
-<h3>Setup domain in digital ocean droplet</h3>
-We now can access the application using the droplet port but in general you want to use it via a domain so here i show it using namecheap
+<h3>Configure Domain on DigitalOcean</h3>
+
+<p>To access your Next.js application using a domain name instead of the droplet's IP address and port, you need to configure your domain's DNS settings. This involves adding the domain to your DigitalOcean account and creating DNS records that point to your droplet.</p>
+
 <ol>
-<li>Purchase a domain e.g. from namecheap</li>
-<li>Add the domain to digital ocean  :navigate to mangae->networking->domains.
-Enter domain - posttoyoutube.xyx, choose project - 'post 2 youtube' and click 'Add domain' 
-<img src='./figs/add-domain-to-do-droplet.png'/>
-</li>
-<li>Create new record :
-HOSTNAME : @
-'WILL DIRECT TO' : add here your doplet
-click on the button create record
-
-as shown in the following image
-<img src='./figs/create-record.png'/>
-
-create also record for hostname www with the same 'WILL DIRECT TO'
-
-the resulted created records appear in the follwoing image where the @ record appears in brown and www record appears in blue 
-<img src='./figs/created-records.png'/>
-</li>
+  <li><strong>Purchase a domain:</strong> Obtain a domain name from a registrar such as Namecheap.</li>
+  <li><strong>Add the domain to DigitalOcean:</strong>
+    <ul>
+      <li>Navigate to "Networking" -> "Domains" in your DigitalOcean control panel.</li>
+      <li>Enter your domain (e.g., posttoyoutube.xyz), select your project, and click "Add domain."
+      <img src="./figs/add-domain-to-do-droplet.png" alt="Add domain to DigitalOcean"></li>
+    </ul>
+  </li>
+  <li><strong>Create DNS records:</strong>
+    <ul>
+      <li>Create an "A" record with:
+        <ul>
+          <li><strong>Hostname:</strong> @</li>
+          <li><strong>Value:</strong> Your droplet's IP address</li>
+        </ul>
+        Click "Create Record."
+      <img src="./figs/create-record.png" alt="Create DNS record in DigitalOcean"></li>
+      <li>Create another "A" record with:
+        <ul>
+          <li><strong>Hostname:</strong> www</li>
+          <li><strong>Value:</strong> Your droplet's IP address</li>
+        </ul>
+      </li>
+      <li>The resulting records will appear in your DigitalOcean DNS settings. The "@" record is shown in brown, and the "www" record in blue
+      <img src="./figs/created-records.png" alt="Created DNS records in DigitalOcean"></li>
+    </ul>
+  </li>
 </ol>
 
-<h3>Setup domain in namecheap</h3>
-Here we will tell the domain provider - namecheap about digital ocean.
-from the dashboard choose the domain post2youtube.xyz and click Manage.
-scroll down and for NAMESERVERS choose "custom DNS' and enter what was written in digitl ocean (prev image): ns1.digitalocean.com. ns2.digitalocean.com. ns3.digitalocean.com. as follows
+<h3>Configure Domain Nameservers on Namecheap</h3>
 
-<img  src='./figs/nameservers-on-namechaep.png'/>
+<p>To point your domain to your DigitalOcean droplet, you need to update your domain's nameservers at your domain registrar (Namecheap, in this example). This tells Namecheap to use DigitalOcean's DNS servers for your domain.</p>
 
-This might take some time to take effect
+<ol>
+  <li><strong>Access Domain Management:</strong>
+    <ul>
+      <li>Log in to your Namecheap account.</li>
+      <li>From the dashboard, select your domain (e.g., post2youtube.xyz) and click "Manage."</li>
+    </ul>
+  </li>
+  <li><strong>Update Nameservers:</strong>
+    <ul>
+      <li>Scroll down to the "NAMESERVERS" section.</li>
+      <li>Select "Custom DNS."</li>
+      <li>Enter the DigitalOcean nameservers provided in the previous step:
+        <ul>
+          <li>ns1.digitalocean.com</li>
+          <li>ns2.digitalocean.com</li>
+          <li>ns3.digitalocean.com</li>
+        </ul>
+      <img src="./figs/nameservers-on-namechaep.png" alt="Namecheap nameserver configuration"></li>
+    </ul>
+  </li>
+  <li><strong>Propagation Time:</strong>
+    <p>DNS changes can take some time to propagate across the internet. It might take a few minutes or up to 48 hours for the changes to take full effect.</p>
+  </li>
+  <li><strong>Initial Access:</strong>
+    <ul>
+      <li>If you try to access your domain immediately after changing nameservers, you might see a "page cannot be displayed" error.<img src="./figs/page-can-not-be-displayed.png" alt="Page cannot be displayed error"></li>
+    </ul>
+  </li>
+  <li><strong>Successful Propagation:</strong>
+    <ul>
+      <li>After the DNS changes propagate, you should see the default Nginx welcome page when you visit your domain (e.g., post2youtube.xyz).<img src="./figs/with-domain-show-default-nginx-page.png" alt="Nginx default page with domain"></li>
+    </ul>
+  </li>
+  <li><strong>Accessing Next.js Application:</strong>
+    <ul>
+      <li>At this point, you can access your Next.js application using your domain, but you will still need to specify the port (e.g., post2youtube.xyz:3000).<img src="./figs/use-domain-but-still-need-port-for-next.png" alt="Next.js app access with port"></li>
+    </ul>
+  </li>
+</ol>
 
-if you try to access it immidiately you might not be able to see the page
+<h3>Access Next.js App Without Port</h3>
 
-<img src='./figs/page-can-not-be-displayed.png'/>
+<p>To access your Next.js application without specifying the port (e.g., post2youtube.xyz instead of post2youtube.xyz:3000), you need to update the Nginx configuration. This involves modifying the <code>server_name</code> directive in your <code>my-app.conf</code> file and removing the default Nginx configuration.</p>
 
+<ol>
+  <li><strong>Update Nginx Configuration:</strong>
+    <ul>
+      <li>Open your <code>my-app.conf</code> file and update the <code>server_name</code> directive:
 
-But after few minutes you will get the default nginx page but with the correct domain post2youtube.xyz 
+```nginx
+      server {
+          listen 80;
+          server_name post2youtube.xyz www.post2youtube.xyz;
+          # ... other configurations ...
+      }
+```
+  </li>
 
-<img src='./figs/with-domain-show-default-nginx-page.png'/>
+  </ul>
+  </li>
+  <li><strong>Test Nginx Configuration:</strong>
+    <ul>
+      <li>Test the Nginx configuration for syntax errors:</li>
 
-you can access the next.js app using the domain but still need the 3000 port 
-
-<img src='./figs/use-domain-but-still-need-port-for-next.png'/>
-
-
-<h3>Access next.js app without port</h3>
-
-update server_name in my-app.conf 
-
-```config
-server {
-listen 80;
-server_name post2youtube.xyz www.post2youtube.xyz;
-}
+```bash
+sudo nginx -t
 ```
 
-as than
+    </ul>
+  </li>
+  <li><strong>Remove Default Nginx Configuration:</strong>
+    <ul>
+      <li>The default Nginx configuration file (<code>/etc/nginx/sites-enabled/default</code>) may interfere with your custom configuration. Remove the symbolic link:
 
   ```bash
-  sudo nginx -t # test configuration
-  sudo systemctl reload nginx # reload Nginx to apply changes:
+  sudo rm /etc/nginx/sites-enabled/default
   ```
-It is not working because the default nginx file - /etc/nginx/sites-enabled/default get in the way so i reomve the symbolic link 
+  </li>
 
-```bash
-sudo rm /etc/nginx/sites-enabled/default
-```
+  <li>Note that the file still exists in <code>/etc/nginx/sites-available/</code>, but it is no longer active.</li>
+    </ul>
+  </li>
+    <li><strong>Reload Nginx:</strong>
+    <ul>
+      <li>Reload Nginx to apply the changes:
 
-but it still exist in /etc/nginx/sites-available/ (yet not active because link removed from sites-enabled)
+  ```bash
+  sudo systemctl reload nginx
+  ```
+  </li>
+    </ul>
+  </li>
+  <li><strong>Verify Access:</strong>
+    <ul>
+      <li>You should now be able to access your Next.js application using your domain name without the port (e.g., http://post2youtube.xyz).</li>
+      <li>However, the connection is still using HTTP, which is not secure.</li>
+    </ul>
+  </li>
+</ol>
 
-after this
-
-```bash
-sudo nginx -t  # Test the configuration for syntax errors
-sudo systemctl reload nginx
-```
-
-now access http://post2youtube.xyz will access the next.js app without need for the port but still the connection is not secured because http is used - not https
 
 <h3>Use https and certificate</h3>
 <p>Now i want to access next.js app without 'Not Secure'</p>
