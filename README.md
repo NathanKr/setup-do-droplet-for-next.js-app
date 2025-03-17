@@ -1,5 +1,5 @@
 <h1>Project Name</h1>
-Setup digital ocean droplet for next.js application
+Next.js Droplet Setup with Nginx and HTTPS
 
 
 
@@ -8,6 +8,18 @@ This project represent the setup that you need to perform once before you want t
 
 <h2>Motivation</h2>
 You have a next.js application and you want to host it on digital ocean droplet - VPS. You want to use https and a domain. What setup is required on the droplt to achive this ?
+
+<h2>Prerequisites</h2>
+<ul>
+  <li>A DigitalOcean account and a created droplet.</li>
+  <li>A domain name.</li>
+  <li>Basic knowledge of Linux command-line interface.</li>
+  <li>A next.js application.</li>
+  <li>Either:
+    * A non-root user with sudo privileges (recommended for enhanced security).
+    * The root user (use with caution)</li>
+</ul>
+
 
 <h2>Installation</h2>
 Execute the following steps in sequence for a one-per-droplet configuration.
