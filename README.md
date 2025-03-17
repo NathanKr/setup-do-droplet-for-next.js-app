@@ -192,20 +192,20 @@ using this file you can now access the next.js app via the browser using the dro
 <h3>Setup domain in digital ocean droplet</h3>
 We now can access the application using the droplet port but in general you want to use it via a domain so here i show it using namecheap
 <ol>
-<li>Purchase a domain</li>
-<li>Add the domain to digital ocean .navigate to mangae->networking->domains 
-Enter domain - posttoyoutube.xyx, choose project - post 2 youtube and click 'Add domain' 
+<li>Purchase a domain e.g. from namecheap</li>
+<li>Add the domain to digital ocean  :navigate to mangae->networking->domains.
+Enter domain - posttoyoutube.xyx, choose project - 'post 2 youtube' and click 'Add domain' 
 <img src='./figs/add-domain-to-do-droplet.png'/>
 </li>
-<li>Create droplet :
-hostname : @
-will direct to : add here your doplet
+<li>Create new record :
+HOSTNAME : @
+'WILL DIRECT TO' : add here your doplet
 click on the button create record
 
 as shown in the following image
 <img src='./figs/create-record.png'/>
 
-create also record for hostname www with the same 'will direct to'
+create also record for hostname www with the same 'WILL DIRECT TO'
 
 the resulted created records appear in the follwoing image where the @ record appears in brown and www record appears in blue 
 <img src='./figs/created-records.png'/>
@@ -213,9 +213,9 @@ the resulted created records appear in the follwoing image where the @ record ap
 </ol>
 
 <h3>Setup domain in namecheap</h3>
-Here we will tell namecheap about digital ocean
-from the dashboard choose the domain post2youtube.xyz and click Manage
-scroll down and for Nameservers choose "custom DNS' and enter what was written in digitl ocean : ns1.digitalocean.com. ns2.digitalocean.com. ns3.digitalocean.com. as follows
+Here we will tell the domain provider - namecheap about digital ocean.
+from the dashboard choose the domain post2youtube.xyz and click Manage.
+scroll down and for NAMESERVERS choose "custom DNS' and enter what was written in digitl ocean (prev image): ns1.digitalocean.com. ns2.digitalocean.com. ns3.digitalocean.com. as follows
 
 <img  src='./figs/nameservers-on-namechaep.png'/>
 
@@ -236,19 +236,28 @@ you can access the next.js app using the domain but still need the 3000 port
 
 
 <h3>Access next.js app without port</h3>
-add     server_name post2youtube.xyz www.post2youtube.xyz; under server {
-    listen 80; in config/nginx/my-app.conf
 
-    ```bash
+update server_name in my-app.conf 
+
+```config
+server {
+listen 80;
+server_name post2youtube.xyz www.post2youtube.xyz;
+}
+```
+
+as than
+
+  ```bash
   sudo nginx -t # test configuration
   sudo systemctl reload nginx # reload Nginx to apply changes:
-    ```
----------->it is not working because the default nginx get in the way so i reomve the symbolic link 
+  ```
+It is not working because the default nginx file - /etc/nginx/sites-enabled/default get in the way so i reomve the symbolic link 
 
 ```bash
 sudo rm /etc/nginx/sites-enabled/default
-
 ```
+
 but it still exist in /etc/nginx/sites-available/ (yet not active because link removed from sites-enabled)
 
 after this
@@ -260,7 +269,8 @@ sudo systemctl reload nginx
 
 now access http://post2youtube.xyz will access the next.js app without need for the port but still the connection is not secured because http is used - not https
 
-<h3>now i want to access next.js app without 'Not Secure' -> need https and certificate</h3>
+<h3>Use https and certificate</h3>
+<p>Now i want to access next.js app without 'Not Secure'</p>
     <strong>1. Install Certbot</strong>
     <ul>
         <li>Update the package list:
@@ -351,7 +361,7 @@ sudo systemctl reload nginx
 
 <h2>Points of Interest</h2>
 <ul>
-    <li>altough the subject of this repo is 'Setup digital ocean droplet for next.js application' it can be used for deploying and node based web site</li>
+    <li>Altough the subject of this repo is 'Setup digital ocean droplet for next.js application' it can be used for deploying any node based web site</li>
 </ul>
 
 <h2>Refrences</h2>
