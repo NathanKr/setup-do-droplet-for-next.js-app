@@ -1,16 +1,18 @@
 <h1>Project Name</h1>
-....
+Setup digital ocean droplet for next.js application
 
 
 
 <h2>Project Description</h2>
-....
+THis project represent the setup that you need to perform once before you want to use next.js app on digital ocean droplet
 
 <h2>Motivation</h2>
 You have a next.js application and you want to host it on digital ocean droplet - VPS. You want to use https and a domain. What setup is required on the droplt to achive this ?
 
 <h2>Installation</h2>
-<h4>make pm2 global (one point of truth)</h4>
+Perform the following in order for one per droplet setup
+
+<h3>make pm2 global (one point of truth)</h3>
 
 1. Install pm2 Globally as Root
 Ensure Node.js and npm are installed:
@@ -113,7 +115,7 @@ Save the current list of processes so they can be restored after a reboot:
 pm2 save
 ```
 
-<h4>Configure Nginx</h4>
+<h3>Configure Nginx</h3>
 <ul>
   <li>
     <strong>Create the file in your GitHub repository:</strong> Store the <code>my-app.conf</code> file in your project's <code>config/nginx</code> directory.
@@ -154,8 +156,9 @@ sudo systemctl reload nginx
   </li>
 </ul>
 
+using this file you can now access the next.js app via the browser using the droplet ip and port 3000
 
-<h4>setup domain in digital ocean droplet</h4>
+<h3>setup domain in digital ocean droplet</h3>
 <ol>
 <li>purchase a domain</li>
 <li>add the domain to digital ocean .navigate to mangae->networking->domains 
@@ -177,7 +180,7 @@ the resulted created records appear in the follwoing image where the @ record ap
 </li>
 </ol>
 
-<h4>setup domain in namecheap</h4>
+<h3>setup domain in namecheap</h3>
 Here we will tell namecheap about digital ocean
 from the dashboard choose the domain post2youtube.xyz and click Manage
 scroll down and for Nameservers choose "custom DNS' and enter what was written in digitl ocean : ns1.digitalocean.com. ns2.digitalocean.com. ns3.digitalocean.com. as follows
@@ -197,10 +200,10 @@ but after few minutes you will getthe default nginx page but with the correct do
 
 you can can access the next.js app using the domain but still need the 3000 port 
 
-<img src='./figs/use-domain-but-still-need-port-for-next.js'/>
+<img src='./figs/use-domain-but-still-need-port-for-next.png'/>
 
 
-<h4>now i want to access next.js app without port</h4>
+<h3>now i want to access next.js app without port</h3>
 add     server_name post2youtube.xyz www.post2youtube.xyz; under server {
     listen 80; in config/nginx/my-app.conf
 
@@ -225,7 +228,7 @@ sudo systemctl reload nginx
 
 now access http://post2youtube.xyz will access the next.js app without need for the port but still the connection is not secured because http is used - not https
 
-<h4>now i want to access next.js app without 'Not Secure' -> need https and certificate</h4>
+<h3>now i want to access next.js app without 'Not Secure' -> need https and certificate</h3>
     <strong>1. Install Certbot</strong>
     <ul>
         <li>Update the package list:
@@ -318,25 +321,16 @@ sudo systemctl reload nginx
 
 
 
-<h2>Design</h2>
-....
 
-
-<h2>Code Structure</h2>
-....
 
 <h2>Demo</h2>
 ....
 
 <h2>Points of Interest</h2>
 <ul>
-    <li>...</li>
+    <li>altough the subject of this repo is 'Setup digital ocean droplet for next.js application' it can be used for deploying and node based web site</li>
    
 </ul>
 
-<h2>References</h2>
-<ul>
-    <li>...</li>
-   
-</ul>
+
 
