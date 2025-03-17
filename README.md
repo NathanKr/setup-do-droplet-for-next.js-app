@@ -4,23 +4,39 @@ Setup digital ocean droplet for next.js application
 
 
 <h2>Project Description</h2>
-THis project represent the setup that you need to perform once before you want to use next.js app on digital ocean droplet
+This project represent the setup that you need to perform once before you want to use next.js app on digital ocean droplet
 
 <h2>Motivation</h2>
 You have a next.js application and you want to host it on digital ocean droplet - VPS. You want to use https and a domain. What setup is required on the droplt to achive this ?
 
 <h2>Installation</h2>
-Perform the following in order for one per droplet setup
+Execute the following steps in sequence for a one-per-droplet configuration.
 
-<h3>make pm2 global (one point of truth)</h3>
 
-1. Install pm2 Globally as Root
-Ensure Node.js and npm are installed:
+<h3>Install node and npm</h3>
+    <ol>
+        <li><strong>Update your package index:</strong>
+            <pre><code>sudo apt update</code></pre>
+        </li>
+        <li><strong>Install Node.js and npm:</strong>
+            <pre><code>sudo apt install nodejs npm</code></pre>
+        </li>
+        <li><strong>Verify the installation:</strong>
+            <ul>
+                <li>Check the Node.js version:
+                    <pre><code>node -v</code></pre>
+                </li>
+                <li>Check the npm version:
+                    <pre><code>npm -v</code></pre>
+                </li>
+            </ul>
+        </li>
+    </ol>
 
-```bash
-node -v
-npm -v
-```
+
+<h3>Make pm2 global (one point of truth)</h3>
+
+1. <strong>Install pm2 Globally as Root</strong>
 
 Install pm2 globally:
 
@@ -34,7 +50,7 @@ Verify installation:
 pm2 -v
 ```
 
-2. Ensure Non-Root User Can Access pm2
+2. <strong>Ensure Non-Root User Can Access pm2</strong>
 Log in as the Non-Root User:
 
 If you're currently logged in as root, switch to the non-root user:
@@ -57,7 +73,7 @@ su - <non-root-username>
 pm2 -v
 ```
 
-3. Grant Write Access to PM2 Files
+3. <strong>Grant Write Access to PM2 Files</strong>
 Change ownership of pm2 directories to the non-root user:
 
 ```bash
@@ -70,7 +86,7 @@ Verify that the .pm2 directory for the user exists:
 ls -l /home/<non-root-username>/.pm2
 ```
 
-4. Test PM2 Commands as Non-Root User
+4. <strong>Test PM2 Commands as Non-Root User</strong>
 
 ```bash
 su - <non-root-username>
@@ -82,9 +98,9 @@ Start an application (e.g., app.js):
 pm2 start app.js --name "my-app"
 pm2 list
 ```
-you canalso use shell command e.g. ls instead of app.js
+You can also use shell command e.g. ls instead of app.js
 
-5. Configure CI/CD Pipeline to Use Non-Root User
+5. <strong>Configure CI/CD Pipeline to Use Non-Root User</strong>
 
 Update your CI/CD pipeline's ssh commands to switch to the non-root user. For example:
 
@@ -92,7 +108,8 @@ Update your CI/CD pipeline's ssh commands to switch to the non-root user. For ex
 ssh non-root-user@VPS_IP "pm2 restart my-app"
 ```
 
-6. Set Up Autostart for PM2 (Optional for Production), need to be invoked once
+6. <strong>Set Up Autostart for PM2 (Optional for Production)</strong> 
+need to be invoked once
 While logged in as the non-root user, configure autostart for the system:
 
 ```bash
@@ -108,15 +125,29 @@ sudo systemctl status pm2-<non-root-username>
 ```
 
 
-7. Save PM2 Processes (Optional)
+7. <strong>Save PM2 Processes (Optional)</strong>
 Save the current list of processes so they can be restored after a reboot:
 
 ```bash
 pm2 save
 ```
 
+<h3>Install Nginx</h3>
+
+
+<ol>
+  <li><code>sudo apt update</code> - Update your package index</li>
+  <li><code>sudo apt install nginx</code> - Install Nginx</li>
+  <li><code>sudo ufw allow 'Nginx Full'</code> - Open both ports 80 (HTTP) and 443 (HTTPS)</li>
+  <li><code>sudo systemctl start nginx</code> - Start Nginx</li>
+  <li><code>sudo systemctl enable nginx</code> - Enable Nginx to start on boot</li>
+  <li><code>sudo systemctl status nginx</code> - Verify Installation</li>
+</ol>
+
+The configuration for this default behavior is usually stored in the /etc/nginx/sites-available/default file, and it’s symlinked to /etc/nginx/sites-enabled/default. This file appears in this repo : ./config/nginx/default
+
 <h3>Configure Nginx</h3>
-<ul>
+<ol>
   <li>
     <strong>Create the file in your GitHub repository:</strong> Store the <code>my-app.conf</code> file in your project's <code>config/nginx</code> directory.
     <pre>
@@ -137,7 +168,7 @@ server {
     </pre>
   </li>
   <li>
-    <strong>Move and link the file via SSH:</strong> In your GitHub Actions workflow, after the code is checked out, use <code>ssh</code> to execute the following commands on your DigitalOcean droplet:
+    <strong>Move and link the file</strong> In your GitHub Actions workflow, after the code is checked out,  execute the following commands on your DigitalOcean droplet:
     <pre>
       <code>
 sudo mv ./config/nginx/my-app.conf /etc/nginx/sites-available/my-app.conf
@@ -147,25 +178,26 @@ sudo ln -sf /etc/nginx/sites-available/my-app.conf /etc/nginx/sites-enabled/my-a
     <p>Note: <code>./config/nginx/my-app.conf</code> refers to the file in the <code>config/nginx</code> directory of your cloned repository.</p>
   </li>
   <li>
-    <strong>Reload Nginx:</strong> Immediately after the move and link commands, use <code>ssh</code> to reload the Nginx configuration:
+    <strong>Reload Nginx:</strong> Immediately after the move and link commands, reload the Nginx configuration:
     <pre>
       <code>
 sudo systemctl reload nginx
       </code>
     </pre>
   </li>
-</ul>
+</ol>
 
 using this file you can now access the next.js app via the browser using the droplet ip and port 3000
 
-<h3>setup domain in digital ocean droplet</h3>
+<h3>Setup domain in digital ocean droplet</h3>
+We now can access the application using the droplet port but in general you want to use it via a domain so here i show it using namecheap
 <ol>
-<li>purchase a domain</li>
-<li>add the domain to digital ocean .navigate to mangae->networking->domains 
+<li>Purchase a domain</li>
+<li>Add the domain to digital ocean .navigate to mangae->networking->domains 
 Enter domain - posttoyoutube.xyx, choose project - post 2 youtube and click 'Add domain' 
 <img src='./figs/add-domain-to-do-droplet.png'/>
 </li>
-<li>create droplet :
+<li>Create droplet :
 hostname : @
 will direct to : add here your doplet
 click on the button create record
@@ -180,30 +212,30 @@ the resulted created records appear in the follwoing image where the @ record ap
 </li>
 </ol>
 
-<h3>setup domain in namecheap</h3>
+<h3>Setup domain in namecheap</h3>
 Here we will tell namecheap about digital ocean
 from the dashboard choose the domain post2youtube.xyz and click Manage
 scroll down and for Nameservers choose "custom DNS' and enter what was written in digitl ocean : ns1.digitalocean.com. ns2.digitalocean.com. ns3.digitalocean.com. as follows
 
 <img  src='./figs/nameservers-on-namechaep.png'/>
 
-This might take time to tkae effect
+This might take some time to take effect
 
 if you try to access it immidiately you might not be able to see the page
 
 <img src='./figs/page-can-not-be-displayed.png'/>
 
 
-but after few minutes you will getthe default nginx page but with the correct domain post2youtube.xyz 
+But after few minutes you will get the default nginx page but with the correct domain post2youtube.xyz 
 
 <img src='./figs/with-domain-show-default-nginx-page.png'/>
 
-you can can access the next.js app using the domain but still need the 3000 port 
+you can access the next.js app using the domain but still need the 3000 port 
 
 <img src='./figs/use-domain-but-still-need-port-for-next.png'/>
 
 
-<h3>now i want to access next.js app without port</h3>
+<h3>Access next.js app without port</h3>
 add     server_name post2youtube.xyz www.post2youtube.xyz; under server {
     listen 80; in config/nginx/my-app.conf
 
@@ -301,36 +333,30 @@ sudo systemctl reload nginx
 
 
 
-
-
-<h2>Usage</h2>
-....
-
-
-
 <h2>Technologies Used</h2>
 <ul>
 <li>digital ocean droplet</li>
-<li>nginx</li>
-<li>ubuntu</li>
-<li>pm2</li>
+<li>nginx (1.26.0)</li>
+<li>ubuntu (24.10)</li>
+<li>node (v20.16.0)</li>
+<li>pm2 (5.4.3)</li>
 <li>https</li>
 <li>namecheap</li>
-<li>next.js</li>
+<li>next.js (15.2.1)</li>
 </ul>
 
 
 
 
-
-<h2>Demo</h2>
-....
 
 <h2>Points of Interest</h2>
 <ul>
     <li>altough the subject of this repo is 'Setup digital ocean droplet for next.js application' it can be used for deploying and node based web site</li>
-   
 </ul>
 
+<h2>Refrences</h2>
+<ul>
+    <li id='ref1'>The next.js application appears in the following <a href='https://github.com/NathanKr/simple-ci-cd-pipeline-for-next.js-app'>repo</a> including CI\CD workflow</li>
+</ul>
 
 
